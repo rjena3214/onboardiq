@@ -1,0 +1,1728 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>OnboardIQ — AI Employee Onboarding Platform</title>
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Geist:wght@300;400;500;600;700&family=Geist+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #fafaf8;
+  --bg2: #f4f3ef;
+  --surface: #ffffff;
+  --surface2: #f8f7f4;
+  --border: #e8e5de;
+  --border2: #d8d4cc;
+  --ink: #1a1916;
+  --ink2: #3d3b35;
+  --muted: #8c8880;
+  --muted2: #b0ada5;
+  --accent: #1a1916;
+  --gold: #c8962a;
+  --gold2: #e8b84b;
+  --green: #2d7a55;
+  --green2: #3a9b6b;
+  --red: #b83232;
+  --amber: #c87820;
+  --blue: #2856a8;
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+body {
+  background: var(--bg);
+  color: var(--ink);
+  font-family: 'Geist', sans-serif;
+  min-height: 100vh;
+}
+
+/* Subtle grain texture */
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.03'/%3E%3C/svg%3E");
+  pointer-events: none;
+  z-index: 0;
+}
+
+/* ── SCREENS ── */
+.screen { display: none; position: relative; z-index: 1; }
+.screen.active { display: block; }
+
+/* ── LANDING ── */
+#landing {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+.landing-nav {
+  display: flex;
+  align-items: center;
+  padding: 20px 40px;
+  border-bottom: 1px solid var(--border);
+}
+
+.logo-mark {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.logo-icon {
+  width: 32px; height: 32px;
+  background: var(--ink);
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  font-family: 'Instrument Serif', serif;
+  font-size: 1rem;
+  font-style: italic;
+}
+
+.logo-text {
+  font-size: 1rem;
+  font-weight: 600;
+  letter-spacing: -0.02em;
+  color: var(--ink);
+}
+
+.logo-text span { color: var(--gold); }
+
+.nav-badge {
+  margin-left: auto;
+  font-family: 'Geist Mono', monospace;
+  font-size: 0.68rem;
+  padding: 4px 10px;
+  border: 1px solid var(--border2);
+  border-radius: 20px;
+  color: var(--muted);
+}
+
+.landing-hero {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 80px 24px 60px;
+  text-align: center;
+}
+
+.hero-tag {
+  font-family: 'Geist Mono', monospace;
+  font-size: 0.72rem;
+  color: var(--gold);
+  text-transform: uppercase;
+  letter-spacing: 0.15em;
+  margin-bottom: 24px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.hero-tag::before, .hero-tag::after {
+  content: '';
+  width: 32px;
+  height: 1px;
+  background: var(--gold2);
+}
+
+.hero-title {
+  font-family: 'Instrument Serif', serif;
+  font-size: clamp(2.4rem, 6vw, 4.2rem);
+  line-height: 1.1;
+  letter-spacing: -0.02em;
+  color: var(--ink);
+  max-width: 720px;
+  margin-bottom: 24px;
+}
+
+.hero-title em {
+  font-style: italic;
+  color: var(--gold);
+}
+
+.hero-sub {
+  font-size: 1rem;
+  color: var(--muted);
+  max-width: 480px;
+  line-height: 1.7;
+  margin-bottom: 48px;
+}
+
+/* Problem cards */
+.problem-strip {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  justify-content: center;
+  max-width: 680px;
+  margin-bottom: 48px;
+}
+
+.problem-pill {
+  padding: 8px 16px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 100px;
+  font-size: 0.8rem;
+  color: var(--ink2);
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.problem-pill .dot {
+  width: 6px; height: 6px;
+  border-radius: 50%;
+  background: var(--red);
+  flex-shrink: 0;
+}
+
+/* Agents preview */
+.agents-preview {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+  justify-content: center;
+  margin-bottom: 48px;
+  max-width: 700px;
+}
+
+.agent-pill {
+  padding: 10px 20px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  font-size: 0.82rem;
+  font-weight: 500;
+  color: var(--ink2);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  transition: all 0.2s;
+}
+
+.agent-pill:hover {
+  border-color: var(--ink);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0,0,0,0.06);
+}
+
+.agent-num {
+  width: 22px; height: 22px;
+  background: var(--ink);
+  color: white;
+  border-radius: 6px;
+  font-family: 'Geist Mono', monospace;
+  font-size: 0.68rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.cta-row {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+.btn-primary {
+  padding: 14px 32px;
+  background: var(--ink);
+  border: none;
+  border-radius: 10px;
+  color: white;
+  font-family: 'Geist', sans-serif;
+  font-weight: 600;
+  font-size: 0.9rem;
+  cursor: pointer;
+  transition: all 0.2s;
+  letter-spacing: -0.01em;
+}
+
+.btn-primary:hover { background: var(--ink2); transform: translateY(-1px); box-shadow: 0 6px 20px rgba(0,0,0,0.12); }
+
+.btn-outline {
+  padding: 14px 32px;
+  background: transparent;
+  border: 1px solid var(--border2);
+  border-radius: 10px;
+  color: var(--ink2);
+  font-family: 'Geist', sans-serif;
+  font-weight: 500;
+  font-size: 0.9rem;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.btn-outline:hover { border-color: var(--ink); color: var(--ink); }
+
+/* ── SETUP ── */
+#setup {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 40px 20px;
+}
+
+.setup-wrap {
+  width: 100%;
+  max-width: 580px;
+}
+
+.setup-header {
+  text-align: center;
+  margin-bottom: 40px;
+}
+
+.setup-header h2 {
+  font-family: 'Instrument Serif', serif;
+  font-size: 2rem;
+  letter-spacing: -0.02em;
+  margin-bottom: 8px;
+}
+
+.setup-header p {
+  color: var(--muted);
+  font-size: 0.88rem;
+  line-height: 1.6;
+}
+
+.setup-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 20px;
+  padding: 36px;
+  box-shadow: 0 2px 20px rgba(0,0,0,0.04);
+}
+
+.step-bar {
+  display: flex;
+  align-items: center;
+  gap: 0;
+  margin-bottom: 32px;
+}
+
+.step-item {
+  display: flex;
+  align-items: center;
+  flex: 1;
+}
+
+.step-dot {
+  width: 28px; height: 28px;
+  border-radius: 50%;
+  border: 1.5px solid var(--border2);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: 'Geist Mono', monospace;
+  font-size: 0.72rem;
+  color: var(--muted);
+  flex-shrink: 0;
+  background: var(--surface);
+  z-index: 1;
+  transition: all 0.3s;
+}
+
+.step-dot.active { border-color: var(--ink); color: var(--ink); background: var(--bg2); }
+.step-dot.done { border-color: var(--green); background: var(--green); color: white; }
+
+.step-line {
+  flex: 1;
+  height: 1px;
+  background: var(--border);
+  margin: 0 -2px;
+}
+
+.field {
+  margin-bottom: 18px;
+}
+
+.field label {
+  display: block;
+  font-size: 0.8rem;
+  font-weight: 500;
+  color: var(--ink2);
+  margin-bottom: 7px;
+  letter-spacing: -0.01em;
+}
+
+.field input,
+.field select,
+.field textarea {
+  width: 100%;
+  background: var(--bg2);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 11px 14px;
+  color: var(--ink);
+  font-family: 'Geist', sans-serif;
+  font-size: 0.88rem;
+  outline: none;
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.field input:focus,
+.field select:focus,
+.field textarea:focus {
+  border-color: var(--ink);
+  box-shadow: 0 0 0 3px rgba(26,25,22,0.06);
+  background: var(--surface);
+}
+
+.field textarea { resize: vertical; min-height: 80px; line-height: 1.6; }
+.field select option { background: var(--surface); }
+
+.field-row { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+
+.api-block {
+  background: var(--bg2);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 16px;
+  margin-bottom: 20px;
+}
+
+.api-block label {
+  font-family: 'Geist Mono', monospace;
+  font-size: 0.7rem;
+  color: var(--gold);
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  display: block;
+  margin-bottom: 8px;
+}
+
+.api-block input {
+  background: var(--surface);
+  border: 1px solid var(--border2);
+  border-radius: 8px;
+  padding: 10px 14px;
+  color: var(--ink);
+  font-family: 'Geist Mono', monospace;
+  font-size: 0.8rem;
+  outline: none;
+  width: 100%;
+  transition: border-color 0.2s;
+}
+
+.api-block input:focus { border-color: var(--ink); }
+
+.btn-full {
+  width: 100%;
+  padding: 13px;
+  background: var(--ink);
+  border: none;
+  border-radius: 10px;
+  color: white;
+  font-family: 'Geist', sans-serif;
+  font-weight: 600;
+  font-size: 0.9rem;
+  cursor: pointer;
+  transition: all 0.2s;
+  margin-top: 8px;
+  letter-spacing: -0.01em;
+}
+
+.btn-full:hover { background: var(--ink2); }
+.btn-full:disabled { opacity: 0.4; cursor: not-allowed; }
+
+.btn-back {
+  padding: 11px 20px;
+  background: transparent;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  color: var(--muted);
+  font-family: 'Geist', sans-serif;
+  font-size: 0.85rem;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.btn-back:hover { border-color: var(--ink); color: var(--ink); }
+
+.err {
+  color: var(--red);
+  font-size: 0.78rem;
+  font-family: 'Geist Mono', monospace;
+  padding: 10px 14px;
+  background: rgba(184,50,50,0.06);
+  border: 1px solid rgba(184,50,50,0.15);
+  border-radius: 8px;
+  margin-top: 12px;
+  display: none;
+}
+
+/* ── PROCESSING ── */
+#processing {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 40px 24px;
+  gap: 40px;
+}
+
+.proc-title {
+  text-align: center;
+}
+
+.proc-title h2 {
+  font-family: 'Instrument Serif', serif;
+  font-size: 1.8rem;
+  letter-spacing: -0.02em;
+  margin-bottom: 8px;
+}
+
+.proc-title p {
+  color: var(--muted);
+  font-size: 0.85rem;
+  font-family: 'Geist Mono', monospace;
+}
+
+.proc-agents {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  width: 100%;
+  max-width: 580px;
+}
+
+.proc-agent {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  padding: 18px 20px;
+  display: flex;
+  align-items: flex-start;
+  gap: 14px;
+  transition: border-color 0.3s;
+}
+
+.proc-agent.running { border-color: var(--gold2); }
+.proc-agent.done { border-color: var(--green2); }
+
+.proc-agent-num {
+  width: 36px; height: 36px;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: 'Geist Mono', monospace;
+  font-size: 0.78rem;
+  font-weight: 500;
+  flex-shrink: 0;
+  transition: all 0.3s;
+  background: var(--bg2);
+  border: 1px solid var(--border);
+  color: var(--muted);
+}
+
+.proc-agent.running .proc-agent-num {
+  background: rgba(200,150,42,0.1);
+  border-color: var(--gold2);
+  color: var(--gold);
+}
+
+.proc-agent.done .proc-agent-num {
+  background: rgba(45,122,85,0.1);
+  border-color: var(--green2);
+  color: var(--green);
+}
+
+.proc-agent-info { flex: 1; }
+
+.proc-agent-name {
+  font-weight: 600;
+  font-size: 0.9rem;
+  margin-bottom: 4px;
+  letter-spacing: -0.01em;
+}
+
+.proc-agent-role {
+  font-size: 0.78rem;
+  color: var(--muted);
+  font-family: 'Geist Mono', monospace;
+}
+
+.proc-agent-status {
+  font-family: 'Geist Mono', monospace;
+  font-size: 0.68rem;
+  padding: 4px 10px;
+  border-radius: 20px;
+  border: 1px solid var(--border);
+  color: var(--muted);
+  white-space: nowrap;
+}
+
+.proc-agent.running .proc-agent-status {
+  border-color: var(--gold2);
+  color: var(--gold);
+  background: rgba(200,150,42,0.06);
+}
+
+.proc-agent.done .proc-agent-status {
+  border-color: var(--green2);
+  color: var(--green);
+  background: rgba(45,122,85,0.06);
+}
+
+.spin {
+  display: inline-block;
+  width: 12px; height: 12px;
+  border: 1.5px solid var(--border2);
+  border-top-color: var(--gold);
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+  vertical-align: middle;
+  margin-right: 4px;
+}
+
+@keyframes spin { to { transform: rotate(360deg); } }
+
+/* ── DASHBOARD ── */
+#dashboard {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+.dash-topbar {
+  display: flex;
+  align-items: center;
+  padding: 16px 28px;
+  border-bottom: 1px solid var(--border);
+  background: var(--surface);
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  gap: 16px;
+}
+
+.dash-logo {
+  font-size: 0.88rem;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+}
+
+.dash-logo span { color: var(--gold); }
+
+.dash-candidate {
+  font-size: 0.82rem;
+  color: var(--muted);
+  font-family: 'Geist Mono', monospace;
+}
+
+.onboard-id {
+  margin-left: auto;
+  font-family: 'Geist Mono', monospace;
+  font-size: 0.7rem;
+  padding: 4px 10px;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  color: var(--muted);
+}
+
+.dash-nav {
+  display: flex;
+  border-bottom: 1px solid var(--border);
+  background: var(--surface);
+  overflow-x: auto;
+  scrollbar-width: none;
+}
+
+.dash-nav::-webkit-scrollbar { display: none; }
+
+.dash-tab {
+  padding: 12px 22px;
+  background: none;
+  border: none;
+  border-bottom: 2px solid transparent;
+  color: var(--muted);
+  font-family: 'Geist', sans-serif;
+  font-size: 0.8rem;
+  font-weight: 500;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: all 0.2s;
+  letter-spacing: -0.01em;
+}
+
+.dash-tab:hover { color: var(--ink); }
+.dash-tab.active { color: var(--ink); border-bottom-color: var(--ink); }
+
+.dash-body {
+  flex: 1;
+  padding: 28px;
+  max-width: 860px;
+  margin: 0 auto;
+  width: 100%;
+}
+
+.tab-panel { display: none; }
+.tab-panel.active { display: block; animation: fadeUp 0.3s ease; }
+
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(12px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* STATUS OVERVIEW */
+.status-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+  gap: 14px;
+  margin-bottom: 28px;
+}
+
+.stat-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  padding: 20px;
+}
+
+.stat-label {
+  font-family: 'Geist Mono', monospace;
+  font-size: 0.68rem;
+  color: var(--muted);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  margin-bottom: 8px;
+}
+
+.stat-value {
+  font-family: 'Instrument Serif', serif;
+  font-size: 1.8rem;
+  color: var(--ink);
+  letter-spacing: -0.02em;
+  line-height: 1;
+  margin-bottom: 4px;
+}
+
+.stat-sub {
+  font-size: 0.75rem;
+  color: var(--muted);
+}
+
+/* AGENT RESULT CARDS */
+.agent-result {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  overflow: hidden;
+  margin-bottom: 20px;
+}
+
+.agent-result-header {
+  padding: 16px 20px;
+  background: var(--surface2);
+  border-bottom: 1px solid var(--border);
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.agent-badge {
+  width: 30px; height: 30px;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: 'Geist Mono', monospace;
+  font-size: 0.7rem;
+  font-weight: 500;
+}
+
+.badge-1 { background: rgba(40,86,168,0.1); color: var(--blue); border: 1px solid rgba(40,86,168,0.2); }
+.badge-2 { background: rgba(200,150,42,0.1); color: var(--gold); border: 1px solid rgba(200,150,42,0.2); }
+.badge-3 { background: rgba(45,122,85,0.1); color: var(--green); border: 1px solid rgba(45,122,85,0.2); }
+.badge-4 { background: rgba(184,50,50,0.1); color: var(--red); border: 1px solid rgba(184,50,50,0.2); }
+
+.agent-result-title {
+  font-weight: 600;
+  font-size: 0.9rem;
+  letter-spacing: -0.01em;
+}
+
+.agent-result-sub {
+  font-size: 0.75rem;
+  color: var(--muted);
+  font-family: 'Geist Mono', monospace;
+}
+
+.done-badge {
+  margin-left: auto;
+  font-family: 'Geist Mono', monospace;
+  font-size: 0.68rem;
+  padding: 3px 10px;
+  background: rgba(45,122,85,0.08);
+  border: 1px solid rgba(45,122,85,0.2);
+  border-radius: 20px;
+  color: var(--green);
+}
+
+.agent-result-body {
+  padding: 20px;
+  font-size: 0.87rem;
+  line-height: 1.85;
+  color: var(--ink2);
+  white-space: pre-wrap;
+}
+
+/* TRAINING TAB */
+.training-module {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  margin-bottom: 16px;
+  overflow: hidden;
+}
+
+.module-header {
+  padding: 16px 20px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.module-header:hover { background: var(--surface2); }
+
+.module-num {
+  width: 28px; height: 28px;
+  background: var(--bg2);
+  border: 1px solid var(--border2);
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: 'Geist Mono', monospace;
+  font-size: 0.72rem;
+  color: var(--muted);
+  flex-shrink: 0;
+}
+
+.module-title { font-weight: 600; font-size: 0.88rem; flex: 1; letter-spacing: -0.01em; }
+.module-status { font-family: 'Geist Mono', monospace; font-size: 0.68rem; color: var(--muted); }
+.module-body { padding: 0 20px 20px; display: none; border-top: 1px solid var(--border); padding-top: 16px; margin-top: 0; }
+.module-body.open { display: block; }
+.module-content { font-size: 0.86rem; line-height: 1.8; color: var(--ink2); white-space: pre-wrap; }
+
+/* TEST TAB */
+.test-header {
+  margin-bottom: 24px;
+}
+
+.test-header h3 {
+  font-family: 'Instrument Serif', serif;
+  font-size: 1.4rem;
+  letter-spacing: -0.02em;
+  margin-bottom: 6px;
+}
+
+.test-header p { color: var(--muted); font-size: 0.85rem; }
+
+.question-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  padding: 22px;
+  margin-bottom: 16px;
+}
+
+.q-num {
+  font-family: 'Geist Mono', monospace;
+  font-size: 0.68rem;
+  color: var(--muted);
+  margin-bottom: 10px;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+
+.q-text {
+  font-size: 0.92rem;
+  font-weight: 500;
+  color: var(--ink);
+  margin-bottom: 16px;
+  line-height: 1.5;
+  letter-spacing: -0.01em;
+}
+
+.q-options {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.q-option {
+  padding: 10px 16px;
+  background: var(--bg2);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 0.85rem;
+  color: var(--ink2);
+  transition: all 0.15s;
+  text-align: left;
+  font-family: 'Geist', sans-serif;
+}
+
+.q-option:hover { border-color: var(--ink); color: var(--ink); background: var(--surface); }
+.q-option.selected { border-color: var(--ink); background: var(--ink); color: white; }
+.q-option.correct { border-color: var(--green); background: rgba(45,122,85,0.08); color: var(--green); }
+.q-option.wrong { border-color: var(--red); background: rgba(184,50,50,0.06); color: var(--red); }
+
+.test-submit {
+  padding: 13px 32px;
+  background: var(--ink);
+  border: none;
+  border-radius: 10px;
+  color: white;
+  font-family: 'Geist', sans-serif;
+  font-weight: 600;
+  font-size: 0.88rem;
+  cursor: pointer;
+  transition: all 0.2s;
+  margin-top: 8px;
+}
+
+.test-submit:hover { background: var(--ink2); }
+.test-submit:disabled { opacity: 0.4; cursor: not-allowed; }
+
+.test-result-banner {
+  padding: 20px 24px;
+  border-radius: 14px;
+  margin-bottom: 20px;
+  display: none;
+}
+
+.result-pass { background: rgba(45,122,85,0.08); border: 1px solid rgba(45,122,85,0.25); }
+.result-fail { background: rgba(184,50,50,0.06); border: 1px solid rgba(184,50,50,0.2); }
+
+.result-score {
+  font-family: 'Instrument Serif', serif;
+  font-size: 2rem;
+  letter-spacing: -0.02em;
+  margin-bottom: 4px;
+}
+
+.result-pass .result-score { color: var(--green); }
+.result-fail .result-score { color: var(--red); }
+
+.result-msg { font-size: 0.85rem; color: var(--muted); }
+
+/* REPORT TAB */
+.report-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  overflow: hidden;
+}
+
+.report-header-bar {
+  padding: 20px 24px;
+  background: var(--ink);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.report-header-bar h3 {
+  font-family: 'Instrument Serif', serif;
+  font-size: 1.2rem;
+  color: white;
+  letter-spacing: -0.01em;
+}
+
+.btn-download {
+  padding: 8px 18px;
+  background: rgba(255,255,255,0.1);
+  border: 1px solid rgba(255,255,255,0.2);
+  border-radius: 8px;
+  color: white;
+  font-family: 'Geist', sans-serif;
+  font-size: 0.78rem;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.btn-download:hover { background: rgba(255,255,255,0.2); }
+
+.report-meta-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  border-bottom: 1px solid var(--border);
+}
+
+.report-meta-item {
+  padding: 16px 20px;
+  border-right: 1px solid var(--border);
+}
+
+.report-meta-item:last-child { border-right: none; }
+
+.rmi-label {
+  font-family: 'Geist Mono', monospace;
+  font-size: 0.65rem;
+  color: var(--muted);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  margin-bottom: 4px;
+}
+
+.rmi-value {
+  font-size: 0.88rem;
+  font-weight: 600;
+  color: var(--ink);
+  letter-spacing: -0.01em;
+}
+
+.report-body-text {
+  padding: 24px;
+  font-size: 0.87rem;
+  line-height: 1.9;
+  color: var(--ink2);
+  white-space: pre-wrap;
+}
+
+.btn-new-onboard {
+  display: block;
+  margin: 24px auto 0;
+  padding: 12px 28px;
+  background: transparent;
+  border: 1px solid var(--border2);
+  border-radius: 10px;
+  color: var(--muted);
+  font-family: 'Geist', sans-serif;
+  font-size: 0.85rem;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.btn-new-onboard:hover { border-color: var(--ink); color: var(--ink); }
+
+@media (max-width: 580px) {
+  .field-row { grid-template-columns: 1fr; }
+  .setup-card { padding: 24px 18px; }
+  .landing-nav { padding: 16px 20px; }
+  .hero-title { font-size: 2rem; }
+  .dash-body { padding: 16px; }
+  .report-meta-grid { grid-template-columns: 1fr 1fr; }
+}
+</style>
+</head>
+<body>
+
+<!-- ── LANDING ── -->
+<div id="landing" class="screen active">
+  <div class="landing-nav">
+    <div class="logo-mark">
+      <div class="logo-icon">O</div>
+      <div class="logo-text">Onboard<span>IQ</span></div>
+    </div>
+    <div class="nav-badge">4-AGENT PIPELINE · MVP</div>
+  </div>
+
+  <div class="landing-hero">
+    <div class="hero-tag">AI Employee Onboarding Platform</div>
+    <h1 class="hero-title">Stop losing employees in their <em>first week.</em></h1>
+    <p class="hero-sub">OnboardIQ uses a 4-agent AI pipeline to onboard new hires with personalised training, assessments, and full reports — automatically.</p>
+
+    <div class="problem-strip">
+      <div class="problem-pill"><span class="dot"></span>Employee quits in first week</div>
+      <div class="problem-pill"><span class="dot"></span>No training or guidance given</div>
+      <div class="problem-pill"><span class="dot"></span>Manager unavailable</div>
+      <div class="problem-pill"><span class="dot"></span>Role misrepresented at hiring</div>
+    </div>
+
+    <div class="agents-preview">
+      <div class="agent-pill"><div class="agent-num">01</div> Role & Risk Analyser</div>
+      <div class="agent-pill"><div class="agent-num">02</div> Training Designer</div>
+      <div class="agent-pill"><div class="agent-num">03</div> Assessment Engine</div>
+      <div class="agent-pill"><div class="agent-num">04</div> Report Generator</div>
+    </div>
+
+    <div class="cta-row">
+      <button class="btn-primary" onclick="showSetup()">Start Onboarding →</button>
+      <button class="btn-outline" onclick="showSetup()">See Demo</button>
+    </div>
+  </div>
+</div>
+
+<!-- ── SETUP ── -->
+<div id="setup" class="screen">
+  <div class="setup-wrap">
+    <div class="setup-header">
+      <h2>New Employee Setup</h2>
+      <p>Enter candidate information to begin the AI onboarding pipeline.</p>
+    </div>
+
+    <div class="setup-card">
+      <div class="step-bar">
+        <div class="step-item">
+          <div class="step-dot active" id="sd1">1</div>
+          <div class="step-line"></div>
+        </div>
+        <div class="step-item">
+          <div class="step-dot" id="sd2">2</div>
+          <div class="step-line"></div>
+        </div>
+        <div class="step-item">
+          <div class="step-dot" id="sd3">3</div>
+        </div>
+      </div>
+
+      <!-- Step 1: API -->
+      <div id="s1">
+        <div class="api-block">
+          <label>Anthropic API Key</label>
+          <input type="password" id="apiKey" placeholder="sk-ant-..." />
+        </div>
+        <p style="font-size:0.78rem; color:var(--muted); margin-bottom:20px; line-height:1.6;">Your key is stored only in this browser session. All AI processing happens directly through Anthropic's API.</p>
+        <button class="btn-full" onclick="step2()">Continue →</button>
+        <div class="err" id="e1"></div>
+      </div>
+
+      <!-- Step 2: Company -->
+      <div id="s2" style="display:none;">
+        <div class="field">
+          <label>Company Name</label>
+          <input type="text" id="companyName" placeholder="e.g. Acme Technologies" />
+        </div>
+        <div class="field">
+          <label>Industry / Sector</label>
+          <input type="text" id="industry" placeholder="e.g. IT Services, Manufacturing, Healthcare" />
+        </div>
+        <div class="field">
+          <label>Company Culture & Values (brief)</label>
+          <textarea id="culture" placeholder="e.g. Fast-paced startup, remote-first, values ownership and initiative..."></textarea>
+        </div>
+        <div style="display:flex; gap:10px;">
+          <button class="btn-back" onclick="goStep1()">← Back</button>
+          <button class="btn-full" onclick="step3()" style="flex:1;">Continue →</button>
+        </div>
+        <div class="err" id="e2"></div>
+      </div>
+
+      <!-- Step 3: Candidate -->
+      <div id="s3" style="display:none;">
+        <div class="field-row">
+          <div class="field">
+            <label>Candidate Name</label>
+            <input type="text" id="candName" placeholder="Full name" />
+          </div>
+          <div class="field">
+            <label>Job Role / Title</label>
+            <input type="text" id="jobRole" placeholder="e.g. Marketing Executive" />
+          </div>
+        </div>
+        <div class="field">
+          <label>Department</label>
+          <input type="text" id="dept" placeholder="e.g. Sales, Engineering, Operations" />
+        </div>
+        <div class="field">
+          <label>Candidate Background</label>
+          <textarea id="background" placeholder="Previous experience, education, skills..."></textarea>
+        </div>
+        <div class="field">
+          <label>Key Responsibilities in This Role</label>
+          <textarea id="responsibilities" placeholder="What will this person be doing day to day?"></textarea>
+        </div>
+        <div style="display:flex; gap:10px;">
+          <button class="btn-back" onclick="goStep2()">← Back</button>
+          <button class="btn-full" onclick="launchPipeline()" id="launchBtn" style="flex:1;">⚡ Launch AI Pipeline</button>
+        </div>
+        <div class="err" id="e3"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ── PROCESSING ── -->
+<div id="processing" class="screen">
+  <div class="proc-title">
+    <h2>AI Pipeline Running</h2>
+    <p id="procSub">Initialising agents...</p>
+  </div>
+
+  <div class="proc-agents">
+    <div class="proc-agent" id="pa1">
+      <div class="proc-agent-num">01</div>
+      <div class="proc-agent-info">
+        <div class="proc-agent-name">Role & Risk Analyser</div>
+        <div class="proc-agent-role">Analyses role fit, onboarding risks, red flags</div>
+      </div>
+      <div class="proc-agent-status" id="ps1">Waiting</div>
+    </div>
+    <div class="proc-agent" id="pa2">
+      <div class="proc-agent-num">02</div>
+      <div class="proc-agent-info">
+        <div class="proc-agent-name">Training Designer</div>
+        <div class="proc-agent-role">Creates personalised training plan & modules</div>
+      </div>
+      <div class="proc-agent-status" id="ps2">Waiting</div>
+    </div>
+    <div class="proc-agent" id="pa3">
+      <div class="proc-agent-num">03</div>
+      <div class="proc-agent-info">
+        <div class="proc-agent-name">Assessment Engine</div>
+        <div class="proc-agent-role">Generates role-specific test questions</div>
+      </div>
+      <div class="proc-agent-status" id="ps3">Waiting</div>
+    </div>
+    <div class="proc-agent" id="pa4">
+      <div class="proc-agent-num">04</div>
+      <div class="proc-agent-info">
+        <div class="proc-agent-name">Report Generator</div>
+        <div class="proc-agent-role">Compiles full onboarding report for HR</div>
+      </div>
+      <div class="proc-agent-status" id="ps4">Waiting</div>
+    </div>
+  </div>
+</div>
+
+<!-- ── DASHBOARD ── -->
+<div id="dashboard" class="screen">
+  <div class="dash-topbar">
+    <div>
+      <div class="dash-logo">Onboard<span>IQ</span></div>
+      <div class="dash-candidate" id="topCand">—</div>
+    </div>
+    <div class="onboard-id" id="onboardId">—</div>
+  </div>
+
+  <div class="dash-nav">
+    <button class="dash-tab active" onclick="switchTab('overview', this)">Overview</button>
+    <button class="dash-tab" onclick="switchTab('analysis', this)">Risk Analysis</button>
+    <button class="dash-tab" onclick="switchTab('training', this)">Training Plan</button>
+    <button class="dash-tab" onclick="switchTab('test', this)">Assessment</button>
+    <button class="dash-tab" onclick="switchTab('report', this)">HR Report</button>
+  </div>
+
+  <div class="dash-body">
+
+    <!-- OVERVIEW -->
+    <div class="tab-panel active" id="tab-overview">
+      <div class="status-grid" id="statsGrid"></div>
+      <div id="overviewCards"></div>
+    </div>
+
+    <!-- ANALYSIS -->
+    <div class="tab-panel" id="tab-analysis">
+      <div class="agent-result">
+        <div class="agent-result-header">
+          <div class="agent-badge badge-1">01</div>
+          <div>
+            <div class="agent-result-title">Role & Risk Analysis</div>
+            <div class="agent-result-sub">Agent 1 — Role fit, risk flags, recommendations</div>
+          </div>
+          <div class="done-badge">✓ Complete</div>
+        </div>
+        <div class="agent-result-body" id="analysisBody">—</div>
+      </div>
+    </div>
+
+    <!-- TRAINING -->
+    <div class="tab-panel" id="tab-training">
+      <div id="trainingModules"></div>
+    </div>
+
+    <!-- TEST -->
+    <div class="tab-panel" id="tab-test">
+      <div class="test-header">
+        <h3>Role Assessment</h3>
+        <p id="testSub">Complete this assessment to validate your role readiness.</p>
+      </div>
+      <div class="test-result-banner" id="testResultBanner">
+        <div class="result-score" id="resultScore">—</div>
+        <div class="result-msg" id="resultMsg">—</div>
+      </div>
+      <div id="questionsWrap"></div>
+      <button class="test-submit" id="submitBtn" onclick="submitTest()">Submit Assessment →</button>
+    </div>
+
+    <!-- REPORT -->
+    <div class="tab-panel" id="tab-report">
+      <div class="report-card">
+        <div class="report-header-bar">
+          <h3>Official Onboarding Report</h3>
+          <button class="btn-download" onclick="downloadReport()">↓ Download</button>
+        </div>
+        <div class="report-meta-grid" id="reportMeta"></div>
+        <div class="report-body-text" id="reportBody">—</div>
+      </div>
+      <button class="btn-new-onboard" onclick="resetAll()">+ Onboard Another Employee</button>
+    </div>
+
+  </div>
+</div>
+
+<script>
+const API = 'https://api.anthropic.com/v1/messages';
+let d = {};
+
+function showSetup() {
+  showScreen('setup');
+}
+
+function showScreen(id) {
+  document.querySelectorAll('.screen').forEach(s => {
+    s.classList.remove('active');
+    s.style.display = '';
+  });
+  const el = document.getElementById(id);
+  el.classList.add('active');
+  if (id === 'setup') el.style.display = 'flex';
+  else el.style.display = 'block';
+}
+
+function step2() {
+  const key = document.getElementById('apiKey').value.trim();
+  if (!key || !key.startsWith('sk-ant')) { showErr('e1', 'Enter a valid Anthropic API key (starts with sk-ant-)'); return; }
+  d.key = key;
+  document.getElementById('s1').style.display = 'none';
+  document.getElementById('s2').style.display = 'block';
+  markStep(1, 'done'); markStep(2, 'active');
+}
+
+function goStep1() {
+  document.getElementById('s2').style.display = 'none';
+  document.getElementById('s1').style.display = 'block';
+  markStep(2, ''); markStep(1, 'active');
+}
+
+function step3() {
+  const c = document.getElementById('companyName').value.trim();
+  const i = document.getElementById('industry').value.trim();
+  if (!c || !i) { showErr('e2', 'Please fill company name and industry.'); return; }
+  d.company = c; d.industry = i; d.culture = document.getElementById('culture').value.trim();
+  document.getElementById('s2').style.display = 'none';
+  document.getElementById('s3').style.display = 'block';
+  markStep(2, 'done'); markStep(3, 'active');
+}
+
+function goStep2() {
+  document.getElementById('s3').style.display = 'none';
+  document.getElementById('s2').style.display = 'block';
+  markStep(3, ''); markStep(2, 'active');
+}
+
+function markStep(n, state) {
+  const el = document.getElementById('sd' + n);
+  el.className = 'step-dot';
+  if (state) el.classList.add(state);
+  if (state === 'done') el.textContent = '✓';
+}
+
+async function launchPipeline() {
+  const name = document.getElementById('candName').value.trim();
+  const role = document.getElementById('jobRole').value.trim();
+  const dept = document.getElementById('dept').value.trim();
+  const bg = document.getElementById('background').value.trim();
+  const resp = document.getElementById('responsibilities').value.trim();
+  if (!name || !role) { showErr('e3', 'Please enter candidate name and job role.'); return; }
+
+  d.name = name; d.role = role; d.dept = dept; d.bg = bg; d.resp = resp;
+  d.caseId = 'OIQ-' + Date.now().toString(36).toUpperCase().slice(-6);
+  d.date = new Date().toLocaleDateString('en-IN', { day: '2-digit', month: 'short', year: 'numeric' });
+
+  document.getElementById('launchBtn').disabled = true;
+  showScreen('processing');
+
+  try {
+    // AGENT 1
+    setAgent(1, 'running');
+    document.getElementById('procSub').textContent = 'Agent 1 analysing role and onboarding risks...';
+    d.analysis = await callAgent(`You are an expert HR onboarding specialist.
+
+Company: ${d.company} | Industry: ${d.industry}
+Culture: ${d.culture || 'Not specified'}
+New Hire: ${d.name} | Role: ${d.role} | Department: ${d.dept}
+Background: ${d.bg || 'Not provided'}
+Responsibilities: ${d.resp || 'Not provided'}
+
+Provide a thorough Role & Risk Analysis covering:
+
+ROLE FIT ASSESSMENT
+[Assess how well the candidate background matches the role — be specific]
+
+ONBOARDING RISK FLAGS
+[List 3-5 specific risks that could cause this employee to quit or fail in week 1]
+
+CRITICAL SUCCESS FACTORS
+[What must happen in the first week for this person to succeed?]
+
+MANAGER ACTION ITEMS
+[5 specific things the manager must do before/during day 1]
+
+MISREPRESENTATION CHECK
+[Based on the role vs background, flag any areas where expectations may not match reality]
+
+Be direct and specific. No generic HR language.`);
+    setAgent(1, 'done');
+
+    // AGENT 2
+    setAgent(2, 'running');
+    document.getElementById('procSub').textContent = 'Agent 2 designing personalised training plan...';
+    d.training = await callAgent(`You are a corporate training designer.
+
+Company: ${d.company} | Role: ${d.role} | Department: ${d.dept}
+Candidate Background: ${d.bg || 'Not provided'}
+Responsibilities: ${d.resp || 'Not provided'}
+Risk Analysis Summary: ${d.analysis.substring(0, 400)}
+
+Design a structured 5-module onboarding training plan.
+
+For each module use this exact format:
+MODULE_1_TITLE: [title]
+MODULE_1_DURATION: [e.g. 2 hours]
+MODULE_1_CONTENT:
+[Detailed training content — at least 150 words of actual training material the employee should learn. Include key concepts, processes, tools, and practical exercises.]
+
+MODULE_2_TITLE: [title]
+MODULE_2_DURATION: [duration]
+MODULE_2_CONTENT:
+[Detailed content]
+
+...continue for all 5 modules
+
+Make content specific to the role and company. Not generic. Include real actionable learning.`);
+    setAgent(2, 'done');
+
+    // AGENT 3
+    setAgent(3, 'running');
+    document.getElementById('procSub').textContent = 'Agent 3 generating assessment questions...';
+    const rawQ = await callAgent(`You are an assessment designer for corporate onboarding.
+
+Role: ${d.role} at ${d.company}
+Department: ${d.dept}
+Responsibilities: ${d.resp || 'Standard role responsibilities'}
+
+Generate exactly 6 multiple choice questions to assess this employee's role readiness.
+
+Return ONLY valid JSON array. No other text. No markdown. Example format:
+[{"q":"Question text?","options":["A. Option","B. Option","C. Option","D. Option"],"answer":0}]
+
+answer is the index (0-3) of the correct option.
+Make questions relevant to the specific role and responsibilities.`);
+
+    try {
+      const clean = rawQ.replace(/\`\`\`json|\`\`\`/g, '').trim();
+      d.questions = JSON.parse(clean);
+    } catch(e) {
+      d.questions = [
+        {q:`What is the primary focus of a ${d.role}?`, options:['A. Administrative tasks only','B. Achieving role objectives and KPIs','C. Managing other departments','D. None of the above'], answer: 1},
+        {q:`How should you handle a task you are unfamiliar with?`, options:['A. Ignore it','B. Do it incorrectly and hope no one notices','C. Ask your manager or refer to training materials','D. Delegate to someone else immediately'], answer: 2},
+        {q:`What is the best way to communicate progress to your manager?`, options:['A. Wait until asked','B. Regular updates through agreed channels','C. Only report failures','D. Avoid communication'], answer: 1},
+        {q:`When is it appropriate to escalate an issue?`, options:['A. Never','B. Only after solving it yourself','C. When it exceeds your authority or expertise','D. Every minor issue'], answer: 2},
+        {q:`What does good onboarding look like from your side?`, options:['A. Learning tools and systems','B. Building relationships with team','C. Understanding role expectations clearly','D. All of the above'], answer: 3},
+        {q:`How should you handle feedback from your manager?`, options:['A. Ignore negative feedback','B. Accept and act on it constructively','C. Argue if you disagree','D. Only accept positive feedback'], answer: 1},
+      ];
+    }
+    setAgent(3, 'done');
+
+    // AGENT 4
+    setAgent(4, 'running');
+    document.getElementById('procSub').textContent = 'Agent 4 generating official HR report...';
+    d.report = await callAgent(`You are an HR documentation specialist.
+
+Generate an official onboarding report for HR records.
+
+CASE: ${d.caseId}
+DATE: ${d.date}
+COMPANY: ${d.company} (${d.industry})
+EMPLOYEE: ${d.name}
+ROLE: ${d.role} | DEPARTMENT: ${d.dept}
+
+Analysis Summary: ${d.analysis.substring(0, 500)}
+Training Modules: 5 modules designed (personalised for role)
+Assessment: 6 questions generated
+
+Write a formal onboarding report including:
+
+EXECUTIVE SUMMARY
+[3-4 sentences summarising the onboarding readiness and key findings]
+
+ONBOARDING STATUS
+[Current status, timeline, what is complete vs pending]
+
+KEY RECOMMENDATIONS FOR HR
+[5 specific recommendations to ensure this employee succeeds]
+
+30-DAY CHECK-IN AGENDA
+[What HR should review at the 30-day mark — specific questions and metrics]
+
+90-DAY SUCCESS METRICS
+[How to measure if this onboarding was successful at 90 days]
+
+RISK MITIGATION PLAN
+[Specific steps to address the risks identified in analysis]
+
+Write formally but clearly. This is an official HR document.`);
+    setAgent(4, 'done');
+
+    await delay(600);
+    buildDashboard();
+    showScreen('dashboard');
+
+  } catch(err) {
+    showScreen('setup');
+    document.getElementById('s3').style.display = 'block';
+    document.getElementById('launchBtn').disabled = false;
+    showErr('e3', 'API Error: ' + err.message);
+  }
+}
+
+function setAgent(n, state) {
+  const card = document.getElementById('pa' + n);
+  const status = document.getElementById('ps' + n);
+  card.className = 'proc-agent ' + state;
+  if (state === 'running') status.innerHTML = '<span class="spin"></span>Running';
+  else if (state === 'done') status.textContent = '✓ Done';
+  else status.textContent = 'Waiting';
+}
+
+function buildDashboard() {
+  document.getElementById('topCand').textContent = d.name + ' · ' + d.role;
+  document.getElementById('onboardId').textContent = d.caseId;
+
+  // Stats
+  document.getElementById('statsGrid').innerHTML = `
+    <div class="stat-card">
+      <div class="stat-label">Employee</div>
+      <div class="stat-value" style="font-size:1.1rem; font-family:'Geist',sans-serif; font-weight:600;">${d.name}</div>
+      <div class="stat-sub">${d.role}</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-label">Department</div>
+      <div class="stat-value" style="font-size:1.1rem; font-family:'Geist',sans-serif; font-weight:600;">${d.dept || '—'}</div>
+      <div class="stat-sub">${d.company}</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-label">Modules</div>
+      <div class="stat-value">5</div>
+      <div class="stat-sub">Training modules ready</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-label">Questions</div>
+      <div class="stat-value">${d.questions?.length || 6}</div>
+      <div class="stat-sub">Assessment items</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-label">Status</div>
+      <div class="stat-value" style="font-size:1rem; color:var(--green); font-family:'Geist',sans-serif; font-weight:600;">Active</div>
+      <div class="stat-sub">Pipeline complete</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-label">Case ID</div>
+      <div class="stat-value" style="font-size:0.9rem; font-family:'Geist Mono',monospace;">${d.caseId}</div>
+      <div class="stat-sub">${d.date}</div>
+    </div>
+  `;
+
+  // Overview cards summary
+  document.getElementById('overviewCards').innerHTML = `
+    <div class="agent-result">
+      <div class="agent-result-header">
+        <div class="agent-badge badge-1">01</div>
+        <div><div class="agent-result-title">Risk Analysis</div><div class="agent-result-sub">Role fit and onboarding risks identified</div></div>
+        <div class="done-badge">✓ Done</div>
+      </div>
+      <div class="agent-result-body">${d.analysis.substring(0, 280)}...</div>
+    </div>
+    <div class="agent-result">
+      <div class="agent-result-header">
+        <div class="agent-badge badge-2">02</div>
+        <div><div class="agent-result-title">Training Plan</div><div class="agent-result-sub">5 personalised training modules created</div></div>
+        <div class="done-badge">✓ Done</div>
+      </div>
+      <div class="agent-result-body">5 structured training modules designed specifically for ${d.role} at ${d.company}. Click the Training Plan tab to view full content.</div>
+    </div>
+    <div class="agent-result">
+      <div class="agent-result-header">
+        <div class="agent-badge badge-3">03</div>
+        <div><div class="agent-result-title">Assessment Ready</div><div class="agent-result-sub">${d.questions?.length || 6} questions generated</div></div>
+        <div class="done-badge">✓ Done</div>
+      </div>
+      <div class="agent-result-body">Role-specific assessment created. Click Assessment tab to begin the test.</div>
+    </div>
+  `;
+
+  // Analysis tab
+  document.getElementById('analysisBody').textContent = d.analysis;
+
+  // Training modules
+  const modules = parseModules(d.training);
+  document.getElementById('trainingModules').innerHTML = modules.map((m, i) => `
+    <div class="training-module">
+      <div class="module-header" onclick="toggleModule(${i})">
+        <div class="module-num">${String(i+1).padStart(2,'0')}</div>
+        <div class="module-title">${m.title}</div>
+        <div class="module-status">${m.duration}</div>
+      </div>
+      <div class="module-body" id="mb${i}">
+        <div class="module-content">${m.content}</div>
+      </div>
+    </div>
+  `).join('');
+
+  // Test questions
+  d.answers = new Array(d.questions.length).fill(-1);
+  renderQuestions();
+
+  // Report
+  document.getElementById('reportMeta').innerHTML = `
+    <div class="report-meta-item"><div class="rmi-label">Case ID</div><div class="rmi-value">${d.caseId}</div></div>
+    <div class="report-meta-item"><div class="rmi-label">Employee</div><div class="rmi-value">${d.name}</div></div>
+    <div class="report-meta-item"><div class="rmi-label">Date</div><div class="rmi-value">${d.date}</div></div>
+  `;
+  document.getElementById('reportBody').textContent = d.report;
+}
+
+function parseModules(text) {
+  const modules = [];
+  for (let i = 1; i <= 5; i++) {
+    const titleMatch = text.match(new RegExp(`MODULE_${i}_TITLE:\\s*(.+)`));
+    const durMatch = text.match(new RegExp(`MODULE_${i}_DURATION:\\s*(.+)`));
+    const contentMatch = text.match(new RegExp(`MODULE_${i}_CONTENT:\\s*([\\s\\S]+?)(?=MODULE_${i+1}_TITLE:|$)`));
+    if (titleMatch) {
+      modules.push({
+        title: titleMatch[1].trim(),
+        duration: durMatch ? durMatch[1].trim() : '',
+        content: contentMatch ? contentMatch[1].trim() : ''
+      });
+    }
+  }
+  if (!modules.length) {
+    return [{title:'Introduction to Role', duration:'1 hour', content: text.substring(0,600)},
+            {title:'Tools & Systems', duration:'2 hours', content:'Learn the core tools for your role.'},
+            {title:'Processes & Workflows', duration:'2 hours', content:'Understand key processes.'},
+            {title:'Team & Communication', duration:'1 hour', content:'Meet your team and communication norms.'},
+            {title:'Goals & Expectations', duration:'1 hour', content:'Review your 30/60/90 day goals.'}];
+  }
+  return modules;
+}
+
+function toggleModule(i) {
+  const el = document.getElementById('mb' + i);
+  el.classList.toggle('open');
+}
+
+function renderQuestions() {
+  const wrap = document.getElementById('questionsWrap');
+  wrap.innerHTML = d.questions.map((q, qi) => `
+    <div class="question-card" id="qc${qi}">
+      <div class="q-num">Question ${qi + 1} of ${d.questions.length}</div>
+      <div class="q-text">${q.q}</div>
+      <div class="q-options">
+        ${q.options.map((opt, oi) => `
+          <button class="q-option" id="qo${qi}_${oi}" onclick="selectAnswer(${qi}, ${oi})">${opt}</button>
+        `).join('')}
+      </div>
+    </div>
+  `).join('');
+}
+
+function selectAnswer(qi, oi) {
+  d.answers[qi] = oi;
+  d.questions[qi].options.forEach((_, i) => {
+    const btn = document.getElementById(`qo${qi}_${i}`);
+    btn.classList.remove('selected');
+  });
+  document.getElementById(`qo${qi}_${oi}`).classList.add('selected');
+}
+
+function submitTest() {
+  const unanswered = d.answers.findIndex(a => a === -1);
+  if (unanswered !== -1) {
+    alert(`Please answer question ${unanswered + 1} before submitting.`);
+    return;
+  }
+
+  let correct = 0;
+  d.questions.forEach((q, i) => {
+    const selected = d.answers[i];
+    const correctIdx = q.answer;
+    const selBtn = document.getElementById(`qo${i}_${selected}`);
+    const corBtn = document.getElementById(`qo${i}_${correctIdx}`);
+    if (selected === correctIdx) { selBtn.classList.remove('selected'); selBtn.classList.add('correct'); correct++; }
+    else { selBtn.classList.remove('selected'); selBtn.classList.add('wrong'); corBtn.classList.add('correct'); }
+    d.questions[i].options.forEach((_, oi) => {
+      document.getElementById(`qo${i}_${oi}`).disabled = true;
+    });
+  });
+
+  const score = Math.round((correct / d.questions.length) * 100);
+  const banner = document.getElementById('testResultBanner');
+  const pass = score >= 60;
+  banner.className = 'test-result-banner ' + (pass ? 'result-pass' : 'result-fail');
+  banner.style.display = 'block';
+  document.getElementById('resultScore').textContent = score + '% — ' + (pass ? 'PASSED' : 'NEEDS REVIEW');
+  document.getElementById('resultMsg').textContent = pass
+    ? `${correct} of ${d.questions.length} correct. Onboarding assessment passed. Proceed to training modules.`
+    : `${correct} of ${d.questions.length} correct. Review the training plan and retake the assessment.`;
+  document.getElementById('submitBtn').disabled = true;
+  d.testScore = score;
+  d.testPassed = pass;
+}
+
+function downloadReport() {
+  const text = `ONBOARDIQ — OFFICIAL ONBOARDING REPORT\n${'='.repeat(50)}\nCase ID: ${d.caseId}\nEmployee: ${d.name}\nRole: ${d.role} | Department: ${d.dept}\nCompany: ${d.company}\nDate: ${d.date}\n\n${d.report}\n\n${'='.repeat(50)}\nAssessment Score: ${d.testScore !== undefined ? d.testScore + '%' : 'Not taken'}\nGenerated by OnboardIQ — github.com/rjena3214`;
+  const blob = new Blob([text], { type: 'text/plain' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url; a.download = `OnboardIQ_${d.caseId}_${d.name.replace(/\s+/g,'_')}.txt`;
+  a.click(); URL.revokeObjectURL(url);
+}
+
+function switchTab(name, btn) {
+  document.querySelectorAll('.tab-panel').forEach(t => t.classList.remove('active'));
+  document.querySelectorAll('.dash-tab').forEach(b => b.classList.remove('active'));
+  document.getElementById('tab-' + name).classList.add('active');
+  btn.classList.add('active');
+}
+
+function resetAll() {
+  d = {};
+  document.getElementById('s1').style.display = 'block';
+  ['s2','s3'].forEach(id => document.getElementById(id).style.display = 'none');
+  ['sd1','sd2','sd3'].forEach((id,i) => { const el = document.getElementById(id); el.className = 'step-dot'; if(i===0) el.classList.add('active'); el.textContent = i+1; });
+  showScreen('landing');
+}
+
+async function callAgent(prompt) {
+  const res = await fetch(API, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'x-api-key': d.key,
+      'anthropic-version': '2023-06-01',
+      'anthropic-dangerous-direct-browser-access': 'true'
+    },
+    body: JSON.stringify({
+      model: 'claude-sonnet-4-20250514',
+      max_tokens: 1000,
+      messages: [{ role: 'user', content: prompt }]
+    })
+  });
+  if (!res.ok) { const e = await res.json(); throw new Error(e.error?.message || 'API error'); }
+  const data = await res.json();
+  return data.content[0].text;
+}
+
+function delay(ms) { return new Promise(r => setTimeout(r, ms)); }
+function showErr(id, msg) { const el = document.getElementById(id); el.textContent = msg; el.style.display = 'block'; }
+</script>
+</body>
+</html>
